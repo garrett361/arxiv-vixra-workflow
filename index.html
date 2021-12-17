@@ -123,7 +123,10 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           language='python'>some_tensor.to('cuda')</d-code> calls needed.
       </li>
       <li>
-        <d-code language='python'>pl</d-code>'s <d-code language='python'>LightningModule</d-code> (a subclass of
+        <d-code language='python'>pl</d-code>'s <a target='_blank' rel='noopener noreferrer'
+          href='https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html'>
+          <d-code language='python'>LightningModule</d-code>
+        </a> (a subclass of
         <d-code language='python'>nn.Module</d-code>) encapsulates the model architecture, optimizer, and (train, val,
         test)-loop code in a neat package, while still allowing for massive customization and minimizing bookkeeping
         code<d-footnote id='bookkeeping'>
@@ -133,9 +136,10 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
         </d-footnote>.
       </li>
       <li>
-        <d-code language='python'>pl</d-code>'s <d-code language='python'>LightningDataModule</d-code> similarly
-        encapsulates the train/val/test <d-code language='python'>torch.Dataset</d-code> instances in a single place
-        which helps to organize and minimize the code.
+        <d-code language='python'>pl</d-code>'s <a target='_blank' rel='noopener noreferrer'
+          href='https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.trainer.trainer.html?highlight=Trainer'>
+          <d-code language='python'>Trainer</d-code>
+        </a> class similarly encapsulates all stages of the train/val/test loops in a single place.
       </li>
     </ul>
 
@@ -168,7 +172,7 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     <p>
       First: a histogram demonstrating how the probabilities predicted by one particular model change with training time
       (<d-math>p=1</d-math> corresponding to a prediction that the title is definitely from viXra). The predictions
-      spread out from <d-math>p=.5</d-math> in the expected manner.
+      spread out from <d-math>p=.5</d-math> in the expected manner (hover to see individual steps):
     </p>
 
     <iframe
@@ -194,27 +198,39 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     relatively straightforward:
     <ol>
       <li>
-        Start with a specific architecture and perform a trial-run on a subset of the training data to estimate the
-        optimal learning rate (lr), à la the well-known <a target='_blank' rel='noopener noreferrer'
-          href='https://arxiv.org/abs/1506.01186'>paper by Leslie Smith.</a> One starts with a small lr and
-        iteratively increases it by a constant factor for each new batch of data until some maximum lr is surpassed or
+        In order to organize the deep-learning model code and minimize the amount of explicit code in my Colab
+        notebooks, I put all <d-code language='python'>pl</d-code> models, data modules, etc into a package I called
+        <d-code language='python'>arxiv_vixra_models</d-code> <a target='_blank' rel='noopener noreferrer'
+          href='https://github.com/garrett361/arxiv-vixra-ml/tree/main/arxiv_vixra_models'>(which can be found
+          here)</a>,
+        and which is easily imported into Colab notebooks from Drive.
+      </li>
+      <li>
+        After importing a model from <d-code language='python'>arxiv_vixra_models</d-code> and setting the
+        hyperparameters which determine
+        the model's capacity, I would then perform a trial-run on a subset of the training data to estimate the
+        optimal initial learning rate (lr), à la the well-known <a target='_blank' rel='noopener noreferrer'
+          href='https://arxiv.org/abs/1506.01186'>paper by Leslie Smith.</a> In this method, a small initial lr is
+        increased by a constant factor for each new batch of data until some maximum lr is surpassed or
         the loss diverges (this process is implemented by <d-code language='python'>pl</d-code>'s <a target='_blank'
           rel='noopener noreferrer'
           href='https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.tuner.tuning.Tuner.html#pytorch_lightning.tuner.tuning.Tuner.lr_find'>lr_find</a>
         method). The location of steepest descent<d-footnote id='descent'>
           This steepest-descent prescription is not precisely what was advocated for in <a target='_blank'
             rel='noopener noreferrer' href='https://arxiv.org/abs/1506.01186'>1506.01186</a> (nor was it the primary
-          focus of the paper) and the rule seems often to be stated without explanation. The essential logic seems to be
+          focus of the paper) and the rule seems often to be stated without explanation. The essential logic is
           that the
           logarithmic learning-rate axis is a proxy for time-step, since the learning rate is being increased by some
-          constant factor for each new batch. Explicitly, the lr at the <d-math>n</d-math>-th batch, <d-math>\ell^{(n)}
-          </d-math> is related to initial rate <d-math>\ell^{(0)}</d-math> by <d-math>\ell^{(n)}=\alpha^n \ell^{(0)}
-          </d-math> for some <d-math>\alpha > 1</d-math>, meaning that <d-math>\ln \ell^{(n)}</d-math> grows linearly
+          constant factor for each new batch. Explicitly, the lr at the <d-math>n</d-math>-th batch, <d-math>\ell_{n}
+          </d-math> is related to initial rate <d-math>\ell_{0}</d-math> by <d-math>\ell_{n}=\alpha^n \ell_{0}
+          </d-math> for some <d-math>\alpha > 1</d-math>, meaning that <d-math>\ln \ell_{n}</d-math> grows linearly
           with <d-math>n</d-math> (the time-step), as claimed. The point of steepest-descent therefore corresponds to
-          the point in time at which the loss was most-rapidly decreasing, which is precisely the property you want for
-          your initial lr. (The model weights are not re-initialized at each step, so comparing different points on the
+          the configuration for which the loss was most-rapidly decreasing in time, which is precisely the desired
+          property for an initial lr. (The model weights are being updated in the usual way at each step, so comparing
+          different
+          points on the
           log(lr) axis is not exactly an apples-to-apples comparison since they correspond to different points in the
-          loss-landscape, but I have not seen this concern addressed.)
+          loss-landscape, but I am not aware of any analysis regarding this concern.)
         </d-footnote> on the resulting loss-vs-log(lr) plot provides the suggested initial lr; see the figure below.
       </li>
       <li>
@@ -226,7 +242,7 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           </a>, but the <d-code language='python'>pl</d-code> team is very responsive
           about addressing the issue, thankfully.
         </d-footnote> exploring a neighborhood of the suggested
-        initial lr and possibly other parameters which do not significantly change the size of the model (e.g. I don't
+        initial lr and possibly other parameters which do not significantly change the size of the model (e.g. don't
         scan over possible choices of hidden dimensions). The latter condition ensures that we can use a constant,
         large-as-possible batch size without running into <d-code language='python'>CUDA error: out of memory</d-code>
         issues due to changes in model size.
