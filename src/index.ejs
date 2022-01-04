@@ -58,8 +58,8 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     </p>
 
     <p>
-      Without good tools and organization, it is easy for a project to get out of hand. Below is a brief description of
-      the tools I found helpful and the general model-training workflow I used.
+      Without good tools and organization, it is easy for a project to get out of hand. Below I describe
+      the tools and workflow used for the arXiv/viXra project.
     </p>
 
     <h3>Tools and Organization</h3>
@@ -87,7 +87,7 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
       Google Colab noteboks are essentially cloud-based, slightly modified Jupyter notebooks which can easily be synced
       up
       with Google Drive<d-footnote id='slow-drive'>
-        Beware: reading data directly from Drive is very slow! Files on Drive can be copied to the colab
+        Beware: reading data directly from Drive is very slow! Files on Drive can be copied to the Colab
         notebook <d-code language='python'>cwd</d-code> via code such as
         <d-code block='' language='python'>
           from google.colab import drive
@@ -95,11 +95,12 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           !cp 'path_to_data_on_Drive' . # Don't forget the period.
         </d-code>
         Pulling from the copied file(s) will be much faster than pulling from Drive.
-      </d-footnote>. The number of simultaneous notebooks one can run, their maximum runtime, and the specs of the GPUs
-      and amount of RAM Google provides are all determined by current demand and subscription level<d-footnote
-        id='cost'>
-        I sprang for the
-        most expensive option ($50/month), which nonetheless seemed economical when compared to AWS instances and other
+      </d-footnote>. The number of simultaneous notebooks one can run, their maximum runtime, and the GPU specs
+      and amount of RAM Google provides are all determined by current demand, historical use, and subscription level
+      <d-footnote id='cost'>
+        I sprung for the
+        most expensive option ($50/month), which nonetheless seemed economical when compared to AWS instances and other,
+        similar
         options.
       </d-footnote>. They are not without headaches, but overall I have been very pleased with the Colab experience.
     </p>
@@ -124,15 +125,22 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     <ul>
       <li>
         <d-code language='python'>pl</d-code> handles moving tensors to the proper device. No explicit <d-code
-          language='python'>some_tensor.to('cuda')</d-code> calls needed.
+          language='python'>some_tensor.to('cuda')</d-code> calls needed for utilizing GPUs.
       </li>
       <li>
         <d-code language='python'>pl</d-code>'s <a target='_blank' rel='noopener noreferrer'
           href='https://pytorch-lightning.readthedocs.io/en/latest/common/lightning_module.html'>
           <d-code language='python'>LightningModule</d-code>
+<<<<<<< HEAD
         </a> (a subclass of
         <d-code language='python'>nn.Module</d-code>) encapsulates the model architecture, optimizer, and (train, val,
         test)-loop code in a neat package, while still allowing for massive customization and minimizing bookkeeping
+=======
+        </a> (a subclass of <d-code language='python'>pytorch</d-code>'s
+        <d-code language='python'>nn.Module</d-code>) encapsulates the model architecture, optimizer, and
+        <d-code language='python'>{train, val, test}</d-code>-loop code in a neat package, while still allowing for
+        massive customization and minimizing
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
         code<d-footnote id='bookkeeping'>
           For example, there is no need to zero-out gradients, call <d-code language='html'>model.eval()</d-code>/
           <d-code language='python'>model.train()</d-code>, or write <d-code language='python'>optimizer.step()</d-code>
@@ -141,9 +149,21 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
       </li>
       <li>
         <d-code language='python'>pl</d-code>'s <a target='_blank' rel='noopener noreferrer'
+<<<<<<< HEAD
           href='https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.trainer.trainer.html?highlight=Trainer'>
           <d-code language='python'>Trainer</d-code>
         </a> class similarly encapsulates all stages of the train/val/test loops in a single place.
+=======
+          href='https://pytorch-lightning.readthedocs.io/en/latest/extensions/datamodules.html'>
+          <d-code language='python'>LightningDataModule</d-code>
+        </a> similarly encapsulates all elements related to the <d-code language='python'>{train, val, test}</d-code>
+        data and
+        <d-code language='python'>pl</d-code>'s
+        <a target='_blank' rel='noopener noreferrer'
+          href='https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.trainer.trainer.html?highlight=Trainer'>
+          <d-code language='python'>Trainer</d-code>
+        </a> ties the preceding elements together at runtime.
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
       </li>
     </ul>
 
@@ -164,7 +184,7 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     </p>
 
     <p>
-      In addition to tracking any desired statistics for training runs, one can also upload arbitrary related files
+      In addition to tracking any desired statistics for training runs, one can also upload arbitrary files for each run
       (such as the <d-code language='python'>state_dict</d-code> for a saved <d-code language='python'>pytorch</d-code>
       model) and easily generate useful visualizations comparing runs or illustrating the results of a single run.
     </p>
@@ -174,9 +194,19 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     </p>
 
     <p>
+<<<<<<< HEAD
       First: a histogram demonstrating how the probabilities predicted by one particular model change with training time
       (<d-math>p=1</d-math> corresponding to a prediction that the title is definitely from viXra). The predictions
       spread out from <d-math>p=.5</d-math> in the expected manner (hover to see individual steps):
+=======
+      First: histograms demonstrating how the probabilities assigned to a sample of papers evolves with training time,
+      as predicted by a particular model. Here <d-math>p</d-math> (y-axis) is the probability that a given paper is from
+      viXra. The predictions spread out from <d-math>p=.5</d-math> in the expected manner (hover to see details of
+      individual time-steps).
+      <a target='_blank' rel='noopener noreferrer'
+        href='https://wandb.ai/garrett361/balanced_title_recurrent_one_hot/reports/arXiv-viXra-Probability-Histogram--VmlldzoxMzQ3MTkx'>(Direct
+        link here.)</a>
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
     </p>
 
     <iframe
@@ -184,9 +214,11 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
       style="border:none;height:1024px;width:100%"></iframe>
 
     <p>
-      Second: predictions for specific examples of titles taken from the validation set from the same model as above. By
+      Second: predictions for specific titles generated by same model as above. By
       allowing for easy inspection of specific examples, <d-code language='python'>wandb</d-code> makes it easier to
-      spot patterns (and possible signs of cheating or code issues) in the run results.
+      spot patterns (and possible signs of cheating or code issues) in the results. <a target='_blank' rel='noopener noreferrer'
+      href='https://wandb.ai/garrett361/balanced_title_recurrent_one_hot/reports/Sample-Title-Predictions--VmlldzoxMzQ3MjMy'>(Direct
+      link here.)</a>
     </p>
 
     <iframe
@@ -198,21 +230,36 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
       Training Workflow
     </h3>
 
-    The general training workflow I used for training all of the deep-learning models detailed in these posts is
-    relatively straightforward:
+    <p>
+      The general training workflow I used for training all of the deep-learning models detailed in these posts is
+      relatively straightforward:
+    </p>
+
     <ol>
       <li>
         In order to organize the deep-learning model code and minimize the amount of explicit code in my Colab
+<<<<<<< HEAD
         notebooks, I put all <d-code language='python'>pl</d-code> models, data modules, etc into a package I called
         <d-code language='python'>arxiv_vixra_models</d-code> <a target='_blank' rel='noopener noreferrer'
           href='https://github.com/garrett361/arxiv-vixra-ml/tree/main/arxiv_vixra_models'>(which can be found
           here)</a>,
         and which is easily imported into Colab notebooks from Drive.
+=======
+        notebooks, I put all <d-code language='python'>pl</d-code> models, data modules, helper functions, etc., into a
+        package,
+        <d-code language='python'>arxiv_vixra_models</d-code> <a target='_blank' rel='noopener noreferrer'
+          href='https://github.com/garrett361/arxiv-vixra-ml/tree/main/arxiv_vixra_models'>(which can be found
+          here)</a>, which is easily imported into Colab notebooks from Drive.
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
       </li>
       <li>
         After importing a model from <d-code language='python'>arxiv_vixra_models</d-code> and setting the
         hyperparameters which determine
+<<<<<<< HEAD
         the model's capacity, I would then perform a trial-run on a subset of the training data to estimate the
+=======
+        the model's capacity, I then performed a trial-run on a subset of the training data to estimate the
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
         optimal initial learning rate (lr), à la the well-known <a target='_blank' rel='noopener noreferrer'
           href='https://arxiv.org/abs/1506.01186'>paper by Leslie Smith.</a> In this method, a small initial lr is
         increased by a constant factor for each new batch of data until some maximum lr is surpassed or
@@ -226,7 +273,11 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           that the
           logarithmic learning-rate axis is a proxy for time-step, since the learning rate is being increased by some
           constant factor for each new batch. Explicitly, the lr at the <d-math>n</d-math>-th batch, <d-math>\ell_{n}
+<<<<<<< HEAD
           </d-math> is related to initial rate <d-math>\ell_{0}</d-math> by <d-math>\ell_{n}=\alpha^n \ell_{0}
+=======
+          </d-math>, is related to initial rate, <d-math>\ell_{0}</d-math>, by <d-math>\ell_{n}=\alpha^n \ell_{0}
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
           </d-math> for some <d-math>\alpha > 1</d-math>, meaning that <d-math>\ln \ell_{n}</d-math> grows linearly
           with <d-math>n</d-math> (the time-step), as claimed. The point of steepest-descent therefore corresponds to
           the configuration for which the loss was most-rapidly decreasing in time, which is precisely the desired
@@ -234,11 +285,15 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           different
           points on the
           log(lr) axis is not exactly an apples-to-apples comparison since they correspond to different points in the
+<<<<<<< HEAD
           loss-landscape, but I am not aware of any analysis regarding this concern.)
+=======
+          loss-landscape, but I am not aware of any analysis regarding this point.)
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
         </d-footnote> on the resulting loss-vs-log(lr) plot provides the suggested initial lr; see the figure below.
       </li>
       <li>
-        Set up a <d-code language='python'>wandb</d-code> hyperparameter scan<d-footnote id='break'>
+        Set up a <d-code language='python'>wandb</d-code> hyperparameter sweep<d-footnote id='break'>
           Updates to <d-code language='python'>pl</d-code> have
           <a target='_blank' rel='noopener noreferrer'
             href='https://github.com/PyTorchLightning/pytorch-lightning/issues/10336'>broken
@@ -246,7 +301,17 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
           </a>, but the <d-code language='python'>pl</d-code> team is very responsive
           about addressing the issue, thankfully.
         </d-footnote> exploring a neighborhood of the suggested
+<<<<<<< HEAD
         initial lr and possibly other parameters which do not significantly change the size of the model (e.g. don't
+=======
+        initial lr and possibly other parameters <d-footnote id='random-search'>
+          The sweep parameters for each run are chosen randomly. <a target='_blank' rel='noopener noreferrer'
+            href='https://jmlr.csail.mit.edu/papers/volume13/bergstra12a/bergstra12a.pdf'>This
+            is a superior strategy to a grid-search</a>, essentially because a random-search avoids making unnecessary
+          assumptions about the structure of hyperparameter space and freeing oneself from a rigidly structured scan
+          expands the effective search volume.
+        </d-footnote> which do not significantly change the size of the model (e.g. don't
+>>>>>>> f9399d321e76cc24fa271e6b5a3df4d0c6aa07d2
         scan over possible choices of hidden dimensions). The latter condition ensures that we can use a constant,
         large-as-possible batch size without running into <d-code language='python'>CUDA error: out of memory</d-code>
         issues due to changes in model size.
@@ -268,7 +333,7 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
         An example of Smith's method for estimating the ideal initial learning rate, as implemented by <d-code
           language='python'>pytorch lightning</d-code>. The red dot is the suggested lr.
       </figcaption>
-    </figure>
+      </figure>
 
 
   </d-article>
@@ -289,7 +354,56 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
     </p>
 
     <d-footnote-list></d-footnote-list>
-    <d-citation-list></d-citation-list>
+
+    <h3>All Project Posts</h3>
+
+    <p>Links to all posts in this series.
+      <em>Note: all code for this project can be found <a target='_blank' rel='noopener noreferrer'
+          href='https://github.com/garrett361/arxiv-vixra-ml'>on my GitHub page</a>.
+      </em>
+    </p>
+
+    <ul>
+      <li>
+        <a target="_blank" rel="noopener noreferrer" href="https://garrettgoon.com/arxiv-vixra-data/">The Data</a>
+      </li>
+      <li>
+        <a target='_blank' rel='noopener noreferrer' href='https://garrettgoon.com/arxiv-vixra-workflow/'>Workflow</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://garrettgoon.com/arxiv-vixra-baseline-models/">Baseline Models</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer" href="https://garrettgoon.com/arxiv-vixra-recurrent/">Simple
+          Recurrent Models</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer" href="https://garrettgoon.com/arxiv-vixra-embeddings/">Embeddings
+          (To Come)</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://garrettgoon.com/arxiv-vixra-convolutions/">Convolutions (To Come)</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer" href="https://garrettgoon.com/arxiv-vixra-attention/">Attention (To
+          Come)</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://garrettgoon.com/arxiv-vixra-transformers/">Transformers (To Come)</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://garrettgoon.com/arxiv-vixra-transfer-learning/">Transfer Learning (To Come)</a>
+      </li>
+      <li>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://garrettgoon.com/arxiv-vixra-test-set-conclusions/">Test Set Performance and Conclusions (To
+          Come)</a>
+      </li>
+    </ul>
   </d-appendix>
 
 
