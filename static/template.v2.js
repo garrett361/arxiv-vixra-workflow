@@ -4186,8 +4186,8 @@ code {
   white-space: nowrap;
   background: rgba(0, 0, 0, 0.04);
   border-radius: 0px;
-  // GG: Commented out for spacing preference padding: 4px 7px;
-  font-size: 30px;
+  padding: 0px 0px;
+  font-size: 36px;
   color: rgba(0, 0, 0, 0.6);
 }
 
