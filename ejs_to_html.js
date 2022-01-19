@@ -12,7 +12,7 @@ function ejs2html(path, information) {
         fs.writeFile(path+"/index.html", html, function(err) {
             if(err) { console.log(err); return false }
             return true;
-        });  
+        });
     });
 }
 
