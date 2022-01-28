@@ -62,3 +62,10 @@ typings/
 _*
 # next.js build output
 .next
+
+# pre-commit
+.flake8
+.pre-commit-config.yaml
+
+# vscode
+.vscode
