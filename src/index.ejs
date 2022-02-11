@@ -148,7 +148,18 @@ as with /static as their root. E.g. <img src="/diagrams/fig1.png">
         <a target='_blank' rel='noopener noreferrer'
           href='https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.trainer.trainer.html?highlight=Trainer'>
           <d-code language='python'>Trainer</d-code>
-        </a> ties the preceding elements together at runtime.
+        </a> ties the preceding elements together at runtime<d-footnote id='trainer'>
+          The <d-code language='python'>Trainer</d-code> also implements useful features like using 16-bit mixed
+          precision or profiling your training runs to look for code bottlenecks. These tips (and more) are detailed by
+          the <d-code language='python'>pytorch_lightning</d-code> creator in Medium posts <a target='_blank'
+            rel='noopener noreferrer'
+            href='https://towardsdatascience.com/7-tips-for-squeezing-maximum-performance-from-pytorch-ca4a40951259'>here</a>
+          and <a target='_blank' rel='noopener noreferrer'
+            href='https://towardsdatascience.com/9-tips-for-training-lightning-fast-neural-networks-in-pytorch-8e63a502f565'>here</a>
+          (the profiler API in the first link is deprecated; see <a target='_blank' rel='noopener noreferrer'
+            href='https://pytorch-lightning.readthedocs.io/en/stable/advanced/profiler.html'>the docs for the current
+            API</a>).
+        </d-footnote>.
       </li>
     </ul>
 
